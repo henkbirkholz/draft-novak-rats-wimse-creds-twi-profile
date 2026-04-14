@@ -1,0 +1,3228 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Trustworthy Workload Identities WIMSE Profile for Replica Workloads</title>
+<meta content="Mark Novak" name="author">
+<meta content="Henk Birkholz" name="author">
+<meta content='
+       The focus of this document is "replica workloads"--meaning workloads that are functionally indistinguishable from the point of view of their clients and their relying parties.
+Such workloads share code, security-sensitive configuration and other compliance-relevant attributes, such as hardware location.
+This document specifies how replica workloads running inside Trusted Execution Environments can obtain WIMSE-compatible credentials (WIC) in a manner that satisfies the requirements of Trustworthy Workload Identities and fits both within the IETF WIMSE and RATS architectures. 
+    ' name="description">
+<meta content="xml2rfc 3.32.0" name="generator">
+<meta content="evidence" name="keyword">
+<meta content="attestation results" name="keyword">
+<meta content="endorsements" name="keyword">
+<meta content="reference values" name="keyword">
+<meta content="draft-novak-rats-wimse-creds-twi-profile-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.32.0
+    Python 3.12.12
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.0.2
+    platformdirs 4.9.4
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.32.5
+    wcwidth 0.6.0
+-->
+<link href="draft-novak-rats-wimse-creds-twi-profile.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow, a.pilcrow:focus {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">TWI WIMSE-CREDS Profile</td>
+<td class="right">April 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Novak &amp; Birkholz</td>
+<td class="center">Expires 16 October 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Remote ATtestation ProcedureS</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-novak-rats-wimse-creds-twi-profile-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-04-14" class="published">14 April 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-10-16">16 October 2026</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">M. Novak</div>
+<div class="org">J.P. Morgan Chase</div>
+</div>
+<div class="author">
+      <div class="author-name">H. Birkholz</div>
+<div class="org">Fraunhofer SIT</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Trustworthy Workload Identities WIMSE Profile for Replica Workloads</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">The focus of this document is "replica workloads"--meaning workloads that are functionally indistinguishable from the point of view of their clients and their relying parties.
+Such workloads share code, security-sensitive configuration and other compliance-relevant attributes, such as hardware location.
+This document specifies how replica workloads running inside Trusted Execution Environments can obtain WIMSE-compatible credentials (WIC) in a manner that satisfies the requirements of Trustworthy Workload Identities and fits both within the IETF WIMSE and RATS architectures.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Discussion of this document takes place on the
+    Remote ATtestation ProcedureS Working Group mailing list (rats@ietf.org),
+    which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/rats/">https://mailarchive.ietf.org/arch/browse/rats/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/henkbirkholz/draft-novak-rats-wimse-creds-twi-profile">https://github.com/henkbirkholz/draft-novak-rats-wimse-creds-twi-profile</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 16 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-actors-and-services" class="internal xref">Actors and Services</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-cryptographic-keys" class="internal xref">Cryptographic Keys</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-credential-acquisition-mech" class="internal xref">Credential Acquisition Mechanism</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-two-phases-of-the-credentia" class="internal xref">Two Phases of the Credential Acquisition Mechanism</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-provisioning-phase" class="internal xref">Provisioning Phase</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
+                    <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-acquisiton-phase" class="internal xref">Acquisiton Phase</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-discussion" class="internal xref">Discussion</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.1">
+                    <p id="section-toc.1-1.5.2.2.2.1.1"><a href="#section-5.2.1" class="auto internal xref">5.2.1</a>.  <a href="#name-fitness-for-purpose" class="internal xref">Fitness for Purpose</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.2">
+                    <p id="section-toc.1-1.5.2.2.2.2.1"><a href="#section-5.2.2" class="auto internal xref">5.2.2</a>.  <a href="#name-deployment-considerations" class="internal xref">Deployment Considerations</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.3">
+                    <p id="section-toc.1-1.5.2.2.2.3.1"><a href="#section-5.2.3" class="auto internal xref">5.2.3</a>.  <a href="#name-performance-optimizations" class="internal xref">Performance Optimizations</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.4">
+                    <p id="section-toc.1-1.5.2.2.2.4.1"><a href="#section-5.2.4" class="auto internal xref">5.2.4</a>.  <a href="#name-credential-rotations" class="internal xref">Credential Rotations</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-cwk-acces-policy" class="internal xref">CWK Acces Policy</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-csk-compromise-threats" class="internal xref">CSK Compromise Threats</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-csk-cwk-one-to-one-coupling" class="internal xref">CSK-CWK One-to-One Coupling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-threat-model" class="internal xref">Threat Model</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
+                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-provisioning-phase-threats-" class="internal xref">Provisioning Phase Threats and Mitigations</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.6">
+                <p id="section-toc.1-1.6.2.6.1"><a href="#section-6.6" class="auto internal xref">6.6</a>.  <a href="#name-acquisition-phase-threats-a" class="internal xref">Acquisition Phase Threats and Mitigations</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The WIMSE Reference Architecture <span>[<a href="#I-D.draft-ietf-wimse-arch" class="cite xref">I-D.draft-ietf-wimse-arch</a>]</span> allows workloads to request credentials from an agent.
+The agent runs on a node and generates RATS evidence <span>[<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> that includes credentials for all workloads running on this node.
+The evidence is conveyed to a WIMSE Server to obtain the node's crendentails in a trustworthy and authentic manner.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This procedure can be a challenge for confidential workloads (workloads running inside Trusted Execution Environments (TEE)).
+Confidential workloads do not necessarily trust the machines on which they are extectued and running.
+Hence, a mechanism is required by which confidential workloads can obtain WIMSE credentials contingent on successfully performing remote attestation to a Verifier, while at the same time being compatible with the WIMSE architechture <span>[<a href="#I-D.draft-ietf-wimse-arch" class="cite xref">I-D.draft-ietf-wimse-arch</a>]</span> and RATS architectures <span>[<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document specifies such a mechanism.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">The reader is assumed to be familiar with the vocabulary and concepts
+defined in <span>[<a href="#I-D.draft-ietf-wimse-arch" class="cite xref">I-D.draft-ietf-wimse-arch</a>]</span> and <span>[<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="actors-and-services">
+<section id="section-3">
+      <h2 id="name-actors-and-services">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-actors-and-services" class="section-name selfRef">Actors and Services</a>
+      </h2>
+<p id="section-3-1">The proposal is composed of interactions between the following actors and services:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3-2">
+        <dt id="section-3-2.1">Workload:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.2">
+          <p id="section-3-2.2.1">One of a collection of identical (in terms of code and configuration) instances of software running inside Trusted Execution Environments<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.3">Workload Owner:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.4">
+          <p id="section-3-2.4.1">The entity that owns the Workload and decides which identity it is to have<a href="#section-3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.5">Key Store:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.6">
+          <p id="section-3-2.6.1">A Hardware Security Module (HSM) or equivalent trusted service generates certain cryptographic keys and keeps them safe from disclosure and tampering while allowing certain operations to be performed using these keys<a href="#section-3-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.7">Credential Authority:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.8">
+          <p id="section-3-2.8.1">A trusted issuer of Workload Credentials<a href="#section-3-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.9">Verifier:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.10">
+          <p id="section-3-2.10.1">A trusted instance of a RATS Verifier used in Remote Attestation of Workloads<a href="#section-3-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="cryptographic-keys">
+<section id="section-4">
+      <h2 id="name-cryptographic-keys">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-cryptographic-keys" class="section-name selfRef">Cryptographic Keys</a>
+      </h2>
+<p id="section-4-1">This proposal uses the following three types of keys:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4-2">
+<li id="section-4-2.1">
+          <p id="section-4-2.1.1">Credential Signing Key (CSK): the asymmetric signing key corresponding to the Workload Credential.
+The public portion is part of the Credential itself, and the private portion is used for proof-of-possession of the Credential.
+The private portion is only given to authorized Workloads and is known exclusively by these Workloads and the Key Store where it is generated.<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-4-2.2">
+          <p id="section-4-2.2.1">CSK Wrapping Key (CWK): the symmetric encryption key used to encrypt the CSK. The Workload obtains the CWK contingent on successfully passing remote attestation. The CWK is generated inside the Key Store just like the CSK, and is uniquely bound to it so that no two CSKs can have the same CWK.<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-4-2.3">
+          <p id="section-4-2.3.1">CWK Delivery Key (CDK): the asymmetric encryption key generated and attested by each Workload instance. Used to securely deliver the CWK to each authorized Workload.<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-4-3">Under the proposal outlined below, the Workload obtains the Workload Credential (e.g., either an X.509 certificate or a Workload Identity Token (WIT)), as well as the encrypted CSK from the Control Plane, and the CWK from a Key Store after performing successful Remote Attestation.
+The Workload then uses the CWK to decrypt (unwrap) the private CSK inside its TEE.<a href="#section-4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="credential-acquisition-mechanism">
+<section id="section-5">
+      <h2 id="name-credential-acquisition-mech">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-credential-acquisition-mech" class="section-name selfRef">Credential Acquisition Mechanism</a>
+      </h2>
+<div id="two-phases-of-the-credential-acquisition-mechanism">
+<section id="section-5.1">
+        <h3 id="name-two-phases-of-the-credentia">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-two-phases-of-the-credentia" class="section-name selfRef">Two Phases of the Credential Acquisition Mechanism</a>
+        </h3>
+<p id="section-5.1-1">The proposed credential acquisition mechanism is split into two phases: the first performed by the Control Plane, and the second by the Workload itself.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">The first phase, called the Provisioning phase, is performed by the Control Plane (i.e., untrusted entities outside of the Workload itself).
+Inside a secure key store, the Control Plane generates 1) a CSK, and 2) a corresponding CWK--without learning either.
+The Control Plane then invokes the Credential Authority to generate the associated public credential containing the public key of the CSK pair, and it uses the key store to generate the CWK and wrap (encrypt) the private key of the CSK pair with the CWK.
+It then makes both the public credential and the wrapped CSK available to the workload instance.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">The second phase is the Acquisition phase. In this phase, the Workload instance launches, performs remote attestation, and uses the Attestation Results from the Verifier to obtain the CWK key from the key store.
+With the CWK key in its possession, the Workload instance can decrypt the wrapped private key of the CSK pair, which enables it to use the Credential.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<div id="provisioning-phase">
+<section id="section-5.1.1">
+          <h4 id="name-provisioning-phase">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-provisioning-phase" class="section-name selfRef">Provisioning Phase</a>
+          </h4>
+<div id="section-5.1.1-1">
+            <div class="alignLeft art-svg artwork" id="section-5.1.1-1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="992" width="568" viewBox="0 0 568 992" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,64" fill="none" stroke="black"></path>
+                <path d="M 16,96 L 16,128" fill="none" stroke="black"></path>
+                <path d="M 32,64 L 32,96" fill="none" stroke="black"></path>
+                <path d="M 32,128 L 32,976" fill="none" stroke="black"></path>
+                <path d="M 48,144 L 48,192" fill="none" stroke="black"></path>
+                <path d="M 136,240 L 136,256" fill="none" stroke="black"></path>
+                <path d="M 136,288 L 136,304" fill="none" stroke="black"></path>
+                <path d="M 144,32 L 144,64" fill="none" stroke="black"></path>
+                <path d="M 160,32 L 160,64" fill="none" stroke="black"></path>
+                <path d="M 176,144 L 176,192" fill="none" stroke="black"></path>
+                <path d="M 240,64 L 240,96" fill="none" stroke="black"></path>
+                <path d="M 240,128 L 240,976" fill="none" stroke="black"></path>
+                <path d="M 256,32 L 256,64" fill="none" stroke="black"></path>
+                <path d="M 272,32 L 272,64" fill="none" stroke="black"></path>
+                <path d="M 336,800 L 336,816" fill="none" stroke="black"></path>
+                <path d="M 336,848 L 336,864" fill="none" stroke="black"></path>
+                <path d="M 344,464 L 344,480" fill="none" stroke="black"></path>
+                <path d="M 344,512 L 344,528" fill="none" stroke="black"></path>
+                <path d="M 344,576 L 344,592" fill="none" stroke="black"></path>
+                <path d="M 344,640 L 344,656" fill="none" stroke="black"></path>
+                <path d="M 432,64 L 432,96" fill="none" stroke="black"></path>
+                <path d="M 432,128 L 432,976" fill="none" stroke="black"></path>
+                <path d="M 448,96 L 448,128" fill="none" stroke="black"></path>
+                <path d="M 456,32 L 456,64" fill="none" stroke="black"></path>
+                <path d="M 472,32 L 472,64" fill="none" stroke="black"></path>
+                <path d="M 512,64 L 512,976" fill="none" stroke="black"></path>
+                <path d="M 560,32 L 560,64" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 144,32" fill="none" stroke="black"></path>
+                <path d="M 160,32 L 256,32" fill="none" stroke="black"></path>
+                <path d="M 272,32 L 456,32" fill="none" stroke="black"></path>
+                <path d="M 472,32 L 560,32" fill="none" stroke="black"></path>
+                <path d="M 8,64 L 144,64" fill="none" stroke="black"></path>
+                <path d="M 160,64 L 256,64" fill="none" stroke="black"></path>
+                <path d="M 272,64 L 456,64" fill="none" stroke="black"></path>
+                <path d="M 472,64 L 560,64" fill="none" stroke="black"></path>
+                <path d="M 16,96 L 448,96" fill="none" stroke="black"></path>
+                <path d="M 16,128 L 448,128" fill="none" stroke="black"></path>
+                <path d="M 48,144 L 176,144" fill="none" stroke="black"></path>
+                <path d="M 48,192 L 176,192" fill="none" stroke="black"></path>
+                <path d="M 32,240 L 56,240" fill="none" stroke="black"></path>
+                <path d="M 72,240 L 136,240" fill="none" stroke="black"></path>
+                <path d="M 40,256 L 136,256" fill="none" stroke="black"></path>
+                <path d="M 32,288 L 56,288" fill="none" stroke="black"></path>
+                <path d="M 72,288 L 136,288" fill="none" stroke="black"></path>
+                <path d="M 40,304 L 136,304" fill="none" stroke="black"></path>
+                <path d="M 40,368 L 56,368" fill="none" stroke="black"></path>
+                <path d="M 72,368 L 232,368" fill="none" stroke="black"></path>
+                <path d="M 32,416 L 56,416" fill="none" stroke="black"></path>
+                <path d="M 72,416 L 232,416" fill="none" stroke="black"></path>
+                <path d="M 240,464 L 264,464" fill="none" stroke="black"></path>
+                <path d="M 280,464 L 344,464" fill="none" stroke="black"></path>
+                <path d="M 248,480 L 344,480" fill="none" stroke="black"></path>
+                <path d="M 240,512 L 264,512" fill="none" stroke="black"></path>
+                <path d="M 280,512 L 344,512" fill="none" stroke="black"></path>
+                <path d="M 248,528 L 344,528" fill="none" stroke="black"></path>
+                <path d="M 240,576 L 264,576" fill="none" stroke="black"></path>
+                <path d="M 280,576 L 344,576" fill="none" stroke="black"></path>
+                <path d="M 248,592 L 344,592" fill="none" stroke="black"></path>
+                <path d="M 240,640 L 264,640" fill="none" stroke="black"></path>
+                <path d="M 280,640 L 344,640" fill="none" stroke="black"></path>
+                <path d="M 248,656 L 344,656" fill="none" stroke="black"></path>
+                <path d="M 40,720 L 64,720" fill="none" stroke="black"></path>
+                <path d="M 80,720 L 240,720" fill="none" stroke="black"></path>
+                <path d="M 32,768 L 56,768" fill="none" stroke="black"></path>
+                <path d="M 80,768 L 424,768" fill="none" stroke="black"></path>
+                <path d="M 336,800 L 384,800" fill="none" stroke="black"></path>
+                <path d="M 408,800 L 432,800" fill="none" stroke="black"></path>
+                <path d="M 336,816 L 424,816" fill="none" stroke="black"></path>
+                <path d="M 336,848 L 384,848" fill="none" stroke="black"></path>
+                <path d="M 408,848 L 432,848" fill="none" stroke="black"></path>
+                <path d="M 336,864 L 424,864" fill="none" stroke="black"></path>
+                <path d="M 40,896 L 384,896" fill="none" stroke="black"></path>
+                <path d="M 408,896 L 432,896" fill="none" stroke="black"></path>
+                <path d="M 32,960 L 56,960" fill="none" stroke="black"></path>
+                <path d="M 80,960 L 504,960" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="512,960 500,954.4 500,965.6" fill="black" transform="rotate(0,504,960)"></polygon>
+                <polygon class="arrowhead" points="432,864 420,858.4 420,869.6" fill="black" transform="rotate(0,424,864)"></polygon>
+                <polygon class="arrowhead" points="432,816 420,810.4 420,821.6" fill="black" transform="rotate(0,424,816)"></polygon>
+                <polygon class="arrowhead" points="432,768 420,762.4 420,773.6" fill="black" transform="rotate(0,424,768)"></polygon>
+                <polygon class="arrowhead" points="256,656 244,650.4 244,661.6" fill="black" transform="rotate(180,248,656)"></polygon>
+                <polygon class="arrowhead" points="256,592 244,586.4 244,597.6" fill="black" transform="rotate(180,248,592)"></polygon>
+                <polygon class="arrowhead" points="256,528 244,522.4 244,533.6" fill="black" transform="rotate(180,248,528)"></polygon>
+                <polygon class="arrowhead" points="256,480 244,474.4 244,485.6" fill="black" transform="rotate(180,248,480)"></polygon>
+                <polygon class="arrowhead" points="240,416 228,410.4 228,421.6" fill="black" transform="rotate(0,232,416)"></polygon>
+                <polygon class="arrowhead" points="240,368 228,362.4 228,373.6" fill="black" transform="rotate(0,232,368)"></polygon>
+                <polygon class="arrowhead" points="48,896 36,890.4 36,901.6" fill="black" transform="rotate(180,40,896)"></polygon>
+                <polygon class="arrowhead" points="48,720 36,714.4 36,725.6" fill="black" transform="rotate(180,40,720)"></polygon>
+                <polygon class="arrowhead" points="48,368 36,362.4 36,373.6" fill="black" transform="rotate(180,40,368)"></polygon>
+                <polygon class="arrowhead" points="48,304 36,298.4 36,309.6" fill="black" transform="rotate(180,40,304)"></polygon>
+                <polygon class="arrowhead" points="48,256 36,250.4 36,261.6" fill="black" transform="rotate(180,40,256)"></polygon>
+                <g class="text">
+                  <text x="52" y="52">Workload</text>
+                  <text x="112" y="52">Owner</text>
+                  <text x="184" y="52">Key</text>
+                  <text x="224" y="52">Store</text>
+                  <text x="324" y="52">Credential</text>
+                  <text x="408" y="52">Authority</text>
+                  <text x="516" y="52">Workload</text>
+                  <text x="140" y="116">Credential</text>
+                  <text x="236" y="116">Provisioning</text>
+                  <text x="312" y="116">Phase</text>
+                  <text x="84" y="164">Invoke</text>
+                  <text x="140" y="164">Claims</text>
+                  <text x="84" y="180">Mapper</text>
+                  <text x="68" y="212">Create</text>
+                  <text x="132" y="212">Workload</text>
+                  <text x="76" y="228">Identity</text>
+                  <text x="64" y="244">1</text>
+                  <text x="84" y="276">Precompute</text>
+                  <text x="148" y="276">RATS</text>
+                  <text x="180" y="276">AR</text>
+                  <text x="64" y="292">2</text>
+                  <text x="80" y="340">Establish</text>
+                  <text x="152" y="340">authen-</text>
+                  <text x="72" y="356">ticated</text>
+                  <text x="132" y="356">secure</text>
+                  <text x="192" y="356">channel</text>
+                  <text x="64" y="372">3</text>
+                  <text x="80" y="388">Provision</text>
+                  <text x="136" y="388">key</text>
+                  <text x="168" y="388">and</text>
+                  <text x="72" y="404">request</text>
+                  <text x="120" y="404">CSR</text>
+                  <text x="156" y="404">(WIC</text>
+                  <text x="184" y="404">+</text>
+                  <text x="208" y="404">AR)</text>
+                  <text x="64" y="420">4</text>
+                  <text x="264" y="436">CWK</text>
+                  <text x="296" y="436">Gen</text>
+                  <text x="328" y="436">and</text>
+                  <text x="360" y="436">set</text>
+                  <text x="392" y="436">CWK</text>
+                  <text x="276" y="452">access</text>
+                  <text x="332" y="452">policy</text>
+                  <text x="372" y="452">to</text>
+                  <text x="396" y="452">AR</text>
+                  <text x="272" y="468">5</text>
+                  <text x="264" y="500">CSK</text>
+                  <text x="296" y="500">Gen</text>
+                  <text x="328" y="500">and</text>
+                  <text x="368" y="500">Store</text>
+                  <text x="272" y="516">6</text>
+                  <text x="280" y="548">Encrypt</text>
+                  <text x="344" y="548">privCSK</text>
+                  <text x="268" y="564">with</text>
+                  <text x="304" y="564">CWK</text>
+                  <text x="272" y="580">7</text>
+                  <text x="264" y="612">CSR</text>
+                  <text x="296" y="612">Gen</text>
+                  <text x="332" y="612">with</text>
+                  <text x="384" y="612">privCSK</text>
+                  <text x="272" y="628">based</text>
+                  <text x="308" y="628">on</text>
+                  <text x="336" y="628">WIC</text>
+                  <text x="360" y="628">+</text>
+                  <text x="396" y="628">pubCSK</text>
+                  <text x="272" y="644">8</text>
+                  <text x="68" y="692">Return</text>
+                  <text x="112" y="692">CSR</text>
+                  <text x="144" y="692">and</text>
+                  <text x="72" y="708">wrapped</text>
+                  <text x="136" y="708">privCSK</text>
+                  <text x="72" y="724">9</text>
+                  <text x="84" y="756">Credential</text>
+                  <text x="160" y="756">Request</text>
+                  <text x="68" y="772">10</text>
+                  <text x="356" y="788">Validate</text>
+                  <text x="408" y="788">CSR</text>
+                  <text x="396" y="804">11</text>
+                  <text x="348" y="836">Credential</text>
+                  <text x="408" y="836">Gen</text>
+                  <text x="396" y="852">12</text>
+                  <text x="308" y="884">Return</text>
+                  <text x="380" y="884">Credential</text>
+                  <text x="396" y="900">13</text>
+                  <text x="80" y="932">Provision</text>
+                  <text x="164" y="932">Credential</text>
+                  <text x="56" y="948">and</text>
+                  <text x="104" y="948">wrapped</text>
+                  <text x="152" y="948">CSK</text>
+                  <text x="68" y="964">14</text>
+                </g>
+              </svg><a href="#section-5.1.1-1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<span id="name-provisioning-phase-2"></span><div id="tbl-provisioning">
+<table class="center" id="table-1">
+            <caption>
+<a href="#table-1" class="selfRef">Table 1</a>:
+<a href="#name-provisioning-phase-2" class="selfRef">Provisioning Phase</a>
+            </caption>
+<thead>
+              <tr>
+                <th class="text-right" rowspan="1" colspan="1">Step</th>
+                <th class="text-left" rowspan="1" colspan="1">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner computes the intended Workload Identity.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">This Identity can be expressed as an X.509 subject</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">alternative name, a WIMSE SVID, etc. The Identity <span class="bcp14">MUST</span>
+</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">include all attributes of the Workload that the Relying</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Party would need to consider in its authorization policy.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">For example, if the Relying Party cares about the country</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">where the Workload would be executing, that information</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">must be reflected in the Identity. The mechanism by which</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Workload Owner decides on which identity to assign to</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Workload is outside of scope of this document.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner precomputes the Attestation Results that</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Workload would present to the Key Store in exchange for</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the CWK during the Acquisition phase. The mechanism for</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">doing so is outside the scope of this document.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">3</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner and the Key Store establish a mutually</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">authenticated secure channel.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">4</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner sends the Workload Identity from Step 1</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">and the Attestation Results from Step 2 to the Key Store.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">It expects to receive back from the Key Store (in Step 10,</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">below) 1) a wrapped CWK and 2) a Credential Signing Request</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">(CSR) that it will subsequently use to request the Workload</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Credential from the Credential Authority.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">5</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores a new CWK, and sets the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">CWK access policy to the value of Attestation Results it</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">has received in Step 4. For security reasons explained in</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Threat Model section in the Security Considerations</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">section later in the document, the CWK access policy <span class="bcp14">MUST</span>
+</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">NOT be changed once set and <span class="bcp14">MUST NOT</span> allow retrieving or</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">modifying the CWK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">6</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores the CSK Pair. The CSK</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Pair has a one-to-one relationship with the CWK that lasts</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">for the lifetime of both keys. The CSK Pair is stored in</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">case the Workload Owner might subsequently ask for the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Credential to be renewed without changing the CSK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">7</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store encrypts the Private CSK with the CWK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">8</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store uses the Workload Identity supplied in Step 4</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">and the CSK Pair generated in Step 6 to create a Credential</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Signing Request (CSR) and signs it with the Private CSK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">9</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store returns to the Workload Owner the wrapped</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Private CSK computed in Step 7 and the Credential Signing</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Request generated in Step 8.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">10</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner forwards the CSR received from the Key</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Store in Step 9 to the Credential Authority to request the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Workload Credential.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">11</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority validates that the CSR has</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">originated from the appropriate Workload Owner and/or Key</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Store (details in the threat model below).</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">12</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority generates and signs (with its own</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">CA issuer signing key, trusted by the Relying Party) the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Workload Credential based on the CSR it has received in</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Step 10.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">13</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority returns the Workload Credential to</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Workload Owner.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">14</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner makes the wrapped Private CSK and the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Workload Credential available to the Workload.</td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+</section>
+</div>
+<div id="acquisiton-phase">
+<section id="section-5.1.2">
+          <h4 id="name-acquisiton-phase">
+<a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-acquisiton-phase" class="section-name selfRef">Acquisiton Phase</a>
+          </h4>
+<p id="section-5.1.2-1">Diagram TBD<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<span id="name-acquisition-phase"></span><div id="tbl-acquisition">
+<table class="center" id="table-2">
+            <caption>
+<a href="#table-2" class="selfRef">Table 2</a>:
+<a href="#name-acquisition-phase" class="selfRef">Acquisition Phase</a>
+            </caption>
+<thead>
+              <tr>
+                <th class="text-right" rowspan="1" colspan="1">Step</th>
+                <th class="text-left" rowspan="1" colspan="1">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner supplies the Workload with the plaintext</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Workload Credential and the wrapped Private CSK. This is</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the same as Step 14 in the previous diagram.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">Inside its TEE, the Workload generates a CDK asymmetric</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">encryption key pair.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">3</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload generates Evidence about itself and its</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">hosting environment for Remote Attestation. The Evidence</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <span class="bcp14">MUST</span> include the public portion of the CDK generated in</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Step 2.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">4</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload contacts the Verifier and presents it with</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Evidence generated in Step 3.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">5</td>
+                <td class="text-left" rowspan="1" colspan="1">The Verifier appraises the Evidence received from the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">6</td>
+                <td class="text-left" rowspan="1" colspan="1">Workload in Step 4 and computes Attestation Results based</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">on this Evidence.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">7</td>
+                <td class="text-left" rowspan="1" colspan="1">The Verifier returns Attestation Results from Step 6 back</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">to the Workload. The Attestation Results <span class="bcp14">MUST</span> contain the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">public portion of the CDK from the Evidence.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">8</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload forwards the Attestation Results received from</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">the Verifier in Step 7 to the Key Store, requesting the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">unwrapped CSK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">9</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store validates the Attestation Results against the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">CWK access policy.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">10</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store encrypts the CWK with the Public CDK in the</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">Attestation Results.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">11</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store returns the encrypted CWK to the Workload.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">12</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload decrypts the CWK with its Private CDK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1">13</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload decrypts the wrapped Private CSK with the CWK.</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">It is now in possession of both the plaintext Credential</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">(supplied in Step 1) and the Private CSK needed to use it</td>
+              </tr>
+              <tr>
+                <td class="text-right" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">with proof-of-possession (decrypted in Step 12).</td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="discussion">
+<section id="section-5.2">
+        <h3 id="name-discussion">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-discussion" class="section-name selfRef">Discussion</a>
+        </h3>
+<div id="fitness-for-purpose">
+<section id="section-5.2.1">
+          <h4 id="name-fitness-for-purpose">
+<a href="#section-5.2.1" class="section-number selfRef">5.2.1. </a><a href="#name-fitness-for-purpose" class="section-name selfRef">Fitness for Purpose</a>
+          </h4>
+<p id="section-5.2.1-1">The mechanism just described is particularly well suited to “horizontally scaling” and “serverless” Workloads.
+The defining characteristic of these Workloads (typically, but not exclusively, Docker containers and Lambda functions) is that they are likely to manifest as large numbers of identical, and frequently short-lived, instances.
+This makes it optimal for Workloads that reuse credentials and credential keys.
+Longer lived Workloads that may want to generate their own individual-to-each-Workload signing keys and obtain Workload Credentials for those are outside the scope of this document.<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="deployment-considerations">
+<section id="section-5.2.2">
+          <h4 id="name-deployment-considerations">
+<a href="#section-5.2.2" class="section-number selfRef">5.2.2. </a><a href="#name-deployment-considerations" class="section-name selfRef">Deployment Considerations</a>
+          </h4>
+<div id="flexible-runtime-integrity-measurements">
+<section id="section-5.2.2.1">
+            <h5 id="name-flexible-runtime-integrity-">
+<a href="#section-5.2.2.1" class="section-number selfRef">5.2.2.1. </a><a href="#name-flexible-runtime-integrity-" class="section-name selfRef">Flexible Runtime Integrity Measurements</a>
+            </h5>
+<p id="section-5.2.2.1-1">While bigger than the scope of this document, this warrants mentioning: it is common for Evidence generated during Workload Remote Attestation to change without materially affecting the security posture of the Workload.
+That can happen, for instance, when the Cloud Service Provider upgrades the firmware of the hardware on which the Workload runs, or when a minor (non-security-sensitive) code change is made to the Workload.
+In either case, the mapping of Evidence to Attestation Results <span class="bcp14">SHOULD</span> be tolerant of the change and not cause Remote Attestation to fail.
+How such flexibility will be achieved is still TBD and needs to be decided by the Attestation SIG at the CCC and the RATS WG at the IETF.<a href="#section-5.2.2.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="credential-partitioningsharding">
+<section id="section-5.2.2.2">
+            <h5 id="name-credential-partitioning-sha">
+<a href="#section-5.2.2.2" class="section-number selfRef">5.2.2.2. </a><a href="#name-credential-partitioning-sha" class="section-name selfRef">Credential Partitioning/Sharding</a>
+            </h5>
+<p id="section-5.2.2.2-1">A break-one-break-all threat is inherent in this proposal: if any Workload instance (or the Workload’s Key Store) leaks the private CSK or the CWK, all its peers get compromised.
+One way of mitigating this threat is to utilize different signing keys for groups of Workloads sharing the same Identity.
+For instance, having a separate Key Store and thus separate CSK/CWK for Workload instances running in different Availability zones in the same cloud region would be an example of such a mitigation.<a href="#section-5.2.2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="performance-optimizations">
+<section id="section-5.2.3">
+          <h4 id="name-performance-optimizations">
+<a href="#section-5.2.3" class="section-number selfRef">5.2.3. </a><a href="#name-performance-optimizations" class="section-name selfRef">Performance Optimizations</a>
+          </h4>
+<p id="section-5.2.3-1">Many Confidential Computing platforms provide a “key derivation” ABI that enables a running Workload to derive encryption keys for its own use (that functionality is sometimes referred to as “sealing to the platform”).
+This encryption key, if used correctly, i.e., meaning that it utilizes both the Workload’s code and its security-sensitive configuration, can allow a Workload to store the Private CSK securely across a restart or power outage.
+A new Workload Instance could re-derive the same encryption key and unseal the previously sealed Private CSK without having to contact a Verifier.<a href="#section-5.2.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="credential-rotations">
+<section id="section-5.2.4">
+          <h4 id="name-credential-rotations">
+<a href="#section-5.2.4" class="section-number selfRef">5.2.4. </a><a href="#name-credential-rotations" class="section-name selfRef">Credential Rotations</a>
+          </h4>
+<p id="section-5.2.4-1">Credentials are issued for a period of time: that could mean a fixed time period, a number of uses or until a notable change in the threat environment occurs (see cryptoperiod <span>[<a href="#key-management" class="cite xref">key-management</a>]</span>]).
+For a Credential expiration to be extended without changing the underlying CSK, the Workload Owner can obtain a refreshed Credential from the CA after requesting a new CSR from the Key Store.
+For that the Key Store has to store the Private CSK.<a href="#section-5.2.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-6">
+      <h2 id="name-security-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<div id="cwk-acces-policy">
+<section id="section-6.1">
+        <h3 id="name-cwk-acces-policy">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-cwk-acces-policy" class="section-name selfRef">CWK Acces Policy</a>
+        </h3>
+<p id="section-6.1-1">It would be dangerous for any outside party to directly obtain a plaintext CWK from the Key Store as the CWK encrypts the Private CSK.
+Once generated, the CWK is accessed only indirectly and in only the following circumstances:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6.1-2">
+<li id="section-6.1-2.1">
+            <p id="section-6.1-2.1.1">By the Key Store itself in order to wrap the Private CSK (in Step 7 of the Provisioning phase)<a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.2">
+            <p id="section-6.1-2.2.1">CSK/CWK deletion by the Workload Owner<a href="#section-6.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.3">
+            <p id="section-6.1-2.3.1">By the Workload in order to retrieve a CWK encrypted specifically for it using its Public CDK (in Steps 10 and 11 of the Acquisition Phase)<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-6.1-3">If the plaintext CWK leaks due to, e.g., a Key Store vulnerability, that immediately leads to the compromise of the corresponding Private CSK (see the following section).<a href="#section-6.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="csk-compromise-threats">
+<section id="section-6.2">
+        <h3 id="name-csk-compromise-threats">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-csk-compromise-threats" class="section-name selfRef">CSK Compromise Threats</a>
+        </h3>
+<p id="section-6.2-1">In this proposal all Workloads matching the CWK access policy share the same Private CSK and thus can utilize the same Workload Credential.
+This means that if any Workload in this authorized set is compromised, or if the Key Store releases the CWK to an authorized party, the corresponding Credential <span class="bcp14">MUST</span> be revoked and reissued.
+Standard rules about limiting the lifetime of a Credential by periodically rotating the CSK apply. Another potential mitigation would be limiting how many Workload instances can share the same CSK.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="csk-cwk-one-to-one-coupling">
+<section id="section-6.3">
+        <h3 id="name-csk-cwk-one-to-one-coupling">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-csk-cwk-one-to-one-coupling" class="section-name selfRef">CSK-CWK One-to-One Coupling</a>
+        </h3>
+<p id="section-6.3-1">Each CWK protects exactly one Private CSK. If the CSK is updated, it is likely due to the need to revoke the previous CSK, and if the same CWK were to be used to wrap the new Private CSK, that would enable continued unauthorized use of those older CSKs.
+Therefore, for each newly generated CSK there has to exist a different CWK.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="threat-model">
+<section id="section-6.4">
+        <h3 id="name-threat-model">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-threat-model" class="section-name selfRef">Threat Model</a>
+        </h3>
+<p id="section-6.4-1">The following best security practices are implied in the analysis below and are not called out in the individual protocol step analysis. Among other things this means that:<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.4-2.1">
+            <p id="section-6.4-2.1.1">Proper cryptography hygiene is maintained:<a href="#section-6.4-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.4-2.1.2.1">
+                <p id="section-6.4-2.1.2.1.1">All sources of randomness used to generate cryptographic keys are of high quality<a href="#section-6.4-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.4-2.1.2.2">
+                <p id="section-6.4-2.1.2.2.1">All cryptographic keys are generated with appropriate strength in terms of key size<a href="#section-6.4-2.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.4-2.1.2.3">
+                <p id="section-6.4-2.1.2.3.1">Correct cryptographic algorithms and modes are used with those cryptographic keys, and that the latest known best practices are used when developing all code.<a href="#section-6.4-2.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-6.4-2.2">
+            <p id="section-6.4-2.2.1">Appropriate and up-to-date code development practices are followed<a href="#section-6.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-2.3">
+            <p id="section-6.4-2.3.1">All deployed software matches expectations and follows best “chain of custody” rules from the point of creation to deployment and throughout the software’s deployed lifetime<a href="#section-6.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-2.4">
+            <p id="section-6.4-2.4.1">All services listed (Key Store, Credential Authority, Verifier) are in the TCB of the Workload and thus must properly safeguard their code and assets in accordance with appropriate guidelines.<a href="#section-6.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-2.5">
+            <p id="section-6.4-2.5.1">Consider running all sensitive code inside a TEE wherever possible.<a href="#section-6.4-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.4-3">The point-to-point message exchanges in this specification do not require the use of transport level security or authentication between the parties, unless noted otherwise.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
+<p id="section-6.4-4">All identified threats are represented by their STRIDE abbreviations, as follows:<a href="#section-6.4-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.4-5.1">
+            <p id="section-6.4-5.1.1">S: Spoofing<a href="#section-6.4-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-5.2">
+            <p id="section-6.4-5.2.1">T: Tampering<a href="#section-6.4-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-5.3">
+            <p id="section-6.4-5.3.1">R: Repudiation<a href="#section-6.4-5.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-5.4">
+            <p id="section-6.4-5.4.1">ID: Information Disclosure<a href="#section-6.4-5.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-5.5">
+            <p id="section-6.4-5.5.1">DoS: Denial of Service<a href="#section-6.4-5.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-5.6">
+            <p id="section-6.4-5.6.1">EoP: Elevation of Privilege<a href="#section-6.4-5.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="provisioning-phase-threats-and-mitigations">
+<section id="section-6.5">
+        <h3 id="name-provisioning-phase-threats-">
+<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-provisioning-phase-threats-" class="section-name selfRef">Provisioning Phase Threats and Mitigations</a>
+        </h3>
+<span id="name-provisioning-phase-threats-a"></span><div id="tbl-prov-threats">
+<table class="center" id="table-3">
+          <caption>
+<a href="#table-3" class="selfRef">Table 3</a>:
+<a href="#name-provisioning-phase-threats-a" class="selfRef">Provisioning Phase Threats and Mitigations</a>
+          </caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Step</th>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Threat</th>
+              <th class="text-left" rowspan="1" colspan="1">Mitigation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">S</td>
+              <td class="text-left" rowspan="1" colspan="1">The Workload Owner</td>
+              <td class="text-left" rowspan="1" colspan="1">Safeguard the Identity</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">and/or Identity</td>
+              <td class="text-left" rowspan="1" colspan="1">and Attestation Results</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">generation logic are</td>
+              <td class="text-left" rowspan="1" colspan="1">generation logic and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">tricked into assigning</td>
+              <td class="text-left" rowspan="1" colspan="1">policies. Generate</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the wrong Identity or</td>
+              <td class="text-left" rowspan="1" colspan="1">Identity and Attestation</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results to</td>
+              <td class="text-left" rowspan="1" colspan="1">Results as a pair rather</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the future Workload.</td>
+              <td class="text-left" rowspan="1" colspan="1">than separately. Log and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">verify all generated</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">outputs.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Generated Identity and</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results are</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">mismatched.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">3</td>
+              <td class="text-left" rowspan="1" colspan="1">Implement standard practices for securing communications</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">between two entities (mutual authentication,</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">data-in-transit protection)</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">S</td>
+              <td class="text-left" rowspan="1" colspan="1">An unauthorized entity</td>
+              <td class="text-left" rowspan="1" colspan="1">The Key Store <span class="bcp14">MUST</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">places a request to the</td>
+              <td class="text-left" rowspan="1" colspan="1">authenticate and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Key Store resulting in</td>
+              <td class="text-left" rowspan="1" colspan="1">authorize the Workload</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Identity and</td>
+              <td class="text-left" rowspan="1" colspan="1">Owner in Step 3 to</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results of</td>
+              <td class="text-left" rowspan="1" colspan="1">ensure that only</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">an attacker's choosing</td>
+              <td class="text-left" rowspan="1" colspan="1">authorized entities are</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">being provisioned to</td>
+              <td class="text-left" rowspan="1" colspan="1">allowed to perform this</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Workloads.</td>
+              <td class="text-left" rowspan="1" colspan="1">operation on the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Workload Identity in</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">question.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">MITM intercepts and</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">changes the Workload</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Identity communicated</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">to the Key Store,</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">leading to Credentials</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">being issued for the</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">wrong Identity.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">MITM intercepts and</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">changes the Attestation</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Results communicated to</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the Key Store, leading</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">to the CWK access</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">policy being incorrect</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">and resulting in</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Credentials being</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">issued to vulnerable or</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">malicious Workloads.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">ID</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">might leak and provide</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">vulnerability</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">intelligence to an</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">attacker.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">S</td>
+              <td class="text-left" rowspan="1" colspan="1">The Workload Owner</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">talks to the wrong Key</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Store which ends up</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">being malicious.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">ID</td>
+              <td class="text-left" rowspan="1" colspan="1">CWK access policy is</td>
+              <td class="text-left" rowspan="1" colspan="1">The Key Store is</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">stored in a manner that</td>
+              <td class="text-left" rowspan="1" colspan="1">expected to implement</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">allows subsequent</td>
+              <td class="text-left" rowspan="1" colspan="1">this functionality</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">tampering, or retrieval</td>
+              <td class="text-left" rowspan="1" colspan="1">correctly. The generated</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">of the plaintext CWK.</td>
+              <td class="text-left" rowspan="1" colspan="1">Access Policy <span class="bcp14">SHOULD</span> be</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">logged and audited.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">6</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">CSK Pair is stored by</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the Key Store in a</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">manner that allows</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">unauthorized retrieval</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">or access.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">7</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">9</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">The Credential Request</td>
+              <td class="text-left" rowspan="1" colspan="1">These are not security-</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">10</td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">and/or the wrapped CSK</td>
+              <td class="text-left" rowspan="1" colspan="1">sensitive: 1) the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">may end up in the wrong</td>
+              <td class="text-left" rowspan="1" colspan="1">Private CSK is wrapped</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">hands, or delivery may</td>
+              <td class="text-left" rowspan="1" colspan="1">and requires the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">be prevented, or</td>
+              <td class="text-left" rowspan="1" colspan="1">Workload to obtain the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">contents might be</td>
+              <td class="text-left" rowspan="1" colspan="1">CWK, which means it has</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">modified in transit.</td>
+              <td class="text-left" rowspan="1" colspan="1">to be the authorized</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Workload. 2) The CSR can</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">only be used to obtain a</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Credential, which itself</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">cannot be used without</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the Private CSK.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Tampering with either</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">would render them</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">useless.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">10</td>
+              <td class="text-left" rowspan="1" colspan="1">S</td>
+              <td class="text-left" rowspan="1" colspan="1">A CSR from an</td>
+              <td class="text-left" rowspan="1" colspan="1">Credential Authority</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">11</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">unauthorized Workload</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span class="bcp14">MUST</span> do either or both</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Owner or Key Store is</td>
+              <td class="text-left" rowspan="1" colspan="1">of the following:</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">sent to the Credential</td>
+              <td class="text-left" rowspan="1" colspan="1">1. Authenticate the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Authority, resulting in</td>
+              <td class="text-left" rowspan="1" colspan="1">Workload Owner and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the Credential</td>
+              <td class="text-left" rowspan="1" colspan="1">establish a secure</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Authority issuing a</td>
+              <td class="text-left" rowspan="1" colspan="1">channel with it before</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Credential to the wrong</td>
+              <td class="text-left" rowspan="1" colspan="1">trusting the CSR.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Identity and/or signing</td>
+              <td class="text-left" rowspan="1" colspan="1">2. Authenticate the Key</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">key.</td>
+              <td class="text-left" rowspan="1" colspan="1">Store by having it</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">counter-sign the CSR</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">with its own private</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">signing key.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">------</td>
+              <td class="text-left" rowspan="1" colspan="1">------#-------------------------+--------------------------</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">12</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">13</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">Sending the Workload</td>
+              <td class="text-left" rowspan="1" colspan="1">Both Workload Credential</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">14</td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">Credential or the</td>
+              <td class="text-left" rowspan="1" colspan="1">and wrapped Private CSK</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">wrapped Private CSK to</td>
+              <td class="text-left" rowspan="1" colspan="1">are safe to disclose,</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">the wrong Workload or</td>
+              <td class="text-left" rowspan="1" colspan="1">and Credential cannot be</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">preventing delivery, or</td>
+              <td class="text-left" rowspan="1" colspan="1">used without unwrapping</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">contents might be</td>
+              <td class="text-left" rowspan="1" colspan="1">the Private CSK first.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">modified in transit.</td>
+              <td class="text-left" rowspan="1" colspan="1">Tampering with either</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">would render them</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">useless.</td>
+            </tr>
+          </tbody>
+        </table>
+</div>
+</section>
+</div>
+<div id="acquisition-phase-threats-and-mitigations">
+<section id="section-6.6">
+        <h3 id="name-acquisition-phase-threats-a">
+<a href="#section-6.6" class="section-number selfRef">6.6. </a><a href="#name-acquisition-phase-threats-a" class="section-name selfRef">Acquisition Phase Threats and Mitigations</a>
+        </h3>
+<span id="name-acquisition-phase-threats-an"></span><div id="tbl-acq-threats">
+<table class="center" id="table-4">
+          <caption>
+<a href="#table-4" class="selfRef">Table 4</a>:
+<a href="#name-acquisition-phase-threats-an" class="selfRef">Acquisition Phase Threats and Mitigations</a>
+          </caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Step</th>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Threat</th>
+              <th class="text-left" rowspan="1" colspan="1">Mitigation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">Identical to Step 14</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">under Provisioning</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">3</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation requests</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation flows are</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">might be prevented from</td>
+              <td class="text-left" rowspan="1" colspan="1">assumed to be designed</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">being delivered or</td>
+              <td class="text-left" rowspan="1" colspan="1">to be tamper-resistant.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">tampered with in</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">transit.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">ID</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation request</td>
+              <td class="text-left" rowspan="1" colspan="1">Workload <span class="bcp14">SHOULD</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">sent to the wrong</td>
+              <td class="text-left" rowspan="1" colspan="1">authenticate the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier or over an</td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier and <span class="bcp14">SHOULD</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">unencrypted channel</td>
+              <td class="text-left" rowspan="1" colspan="1">establish a secure</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">discloses information</td>
+              <td class="text-left" rowspan="1" colspan="1">transport channel with</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">about Workload's</td>
+              <td class="text-left" rowspan="1" colspan="1">the Verifier prior to</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">composition to an</td>
+              <td class="text-left" rowspan="1" colspan="1">sharing the Attestation</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">unauthorized party.</td>
+              <td class="text-left" rowspan="1" colspan="1">Results.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">Wrong appraisal policy</td>
+              <td class="text-left" rowspan="1" colspan="1">Secure the Appraisal</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">6</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">for Evidence on</td>
+              <td class="text-left" rowspan="1" colspan="1">Policy for Evidence and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier leads to</td>
+              <td class="text-left" rowspan="1" colspan="1">Reference Values. Log</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">incorrect appraisal</td>
+              <td class="text-left" rowspan="1" colspan="1">and audit all requests</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">decision.</td>
+              <td class="text-left" rowspan="1" colspan="1">and responses.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">7</td>
+              <td class="text-left" rowspan="1" colspan="1">ID</td>
+              <td class="text-left" rowspan="1" colspan="1">Lack of secure channel</td>
+              <td class="text-left" rowspan="1" colspan="1">Utilizing the same</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">between the Workload</td>
+              <td class="text-left" rowspan="1" colspan="1">secure channel</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">and the Verifier may</td>
+              <td class="text-left" rowspan="1" colspan="1">established in Step 4</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">lead to leaking the</td>
+              <td class="text-left" rowspan="1" colspan="1">will mitigate this</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results to</td>
+              <td class="text-left" rowspan="1" colspan="1">threat.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">unauthorized parties.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">7</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results</td>
+              <td class="text-left" rowspan="1" colspan="1">Flows involving</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">might be prevented from</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results are</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">being delivered or</td>
+              <td class="text-left" rowspan="1" colspan="1">assumed to be designed</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">tampered with in</td>
+              <td class="text-left" rowspan="1" colspan="1">to be tamper-resistant.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">transit. Same applies</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">to the request for the</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">CWK sent to the Key</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Store.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">EoP</td>
+              <td class="text-left" rowspan="1" colspan="1">There is a</td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier signs or</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">vulnerability in the</td>
+              <td class="text-left" rowspan="1" colspan="1">timestamps the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier that causes it</td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results and</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">to produce wrong</td>
+              <td class="text-left" rowspan="1" colspan="1">the Key Store validates</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Attestation Results.</td>
+              <td class="text-left" rowspan="1" colspan="1">this before releasing</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">The Workload caches</td>
+              <td class="text-left" rowspan="1" colspan="1">the CWK. Alternatively,</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">these Attestation</td>
+              <td class="text-left" rowspan="1" colspan="1">the Key Store engages in</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Results and</td>
+              <td class="text-left" rowspan="1" colspan="1">a proof-of-liveness</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">accidentally or</td>
+              <td class="text-left" rowspan="1" colspan="1">exchange with the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">deliberately causes the</td>
+              <td class="text-left" rowspan="1" colspan="1">Verifier.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Key Store to</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">incorrectly release the</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">CWK.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">9</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1">Incorrect decision made</td>
+              <td class="text-left" rowspan="1" colspan="1">Security at this step</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">on whether to allow the</td>
+              <td class="text-left" rowspan="1" colspan="1">assumes that the correct</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">caller to retrieve the</td>
+              <td class="text-left" rowspan="1" colspan="1">CWK access policy has</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">CWK.</td>
+              <td class="text-left" rowspan="1" colspan="1">been set during the</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">Provisioning flow.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">10</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">11</td>
+              <td class="text-left" rowspan="1" colspan="1">DoS</td>
+              <td class="text-left" rowspan="1" colspan="1">Encrypted CWK might be</td>
+              <td class="text-left" rowspan="1" colspan="1">Tampered CWK is</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">T</td>
+              <td class="text-left" rowspan="1" colspan="1">tampered with in</td>
+              <td class="text-left" rowspan="1" colspan="1">unusable.</td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">transit or prevented</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">from being delivered.</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">12</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">13</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+          </tbody>
+        </table>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-7">
+      <h2 id="name-references">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-7.1">
+        <h3 id="name-normative-references">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="BCP26">[BCP26]</dt>
+        <dd>
+<span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.draft-ietf-wimse-arch">[I-D.draft-ietf-wimse-arch]</dt>
+        <dd>
+<span class="refAuthor">Salowey, J. A.</span>, <span class="refAuthor">Rosomakho, Y.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Workload Identity in a Multi System Environment (WIMSE) Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-wimse-arch-07</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-wimse-arch-07">https://datatracker.ietf.org/doc/html/draft-ietf-wimse-arch-07</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.draft-ietf-wimse-workload-creds">[I-D.draft-ietf-wimse-workload-creds]</dt>
+        <dd>
+<span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Salowey, J. A.</span>, <span class="refAuthor">Schwenkschuster, A.</span>, <span class="refAuthor">Sheffer, Y.</span>, and <span class="refAuthor">Y. Rosomakho</span>, <span class="refTitle">"WIMSE Workload Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-wimse-workload-creds-00</span>, <time datetime="2025-11-03" class="refDate">3 November 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-wimse-workload-creds-00">https://datatracker.ietf.org/doc/html/draft-ietf-wimse-workload-creds-00</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9334">[RFC9334]</dt>
+        <dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Thaler, D.</span>, <span class="refAuthor">Richardson, M.</span>, <span class="refAuthor">Smith, N.</span>, and <span class="refAuthor">W. Pan</span>, <span class="refTitle">"Remote ATtestation procedureS (RATS) Architecture"</span>, <span class="seriesInfo">RFC 9334</span>, <span class="seriesInfo">DOI 10.17487/RFC9334</span>, <time datetime="2023-01" class="refDate">January 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9334">https://www.rfc-editor.org/rfc/rfc9334</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TWISIGCharter">[TWISIGCharter]</dt>
+        <dd>
+<span class="refAuthor">Confidential Computing Consortium Trustworthy Workload Identity SIG</span>, <span class="refTitle">"Trustworthy Workload Identity (TWI) Special Interest Group — Charter"</span>, <span>n.d.</span>, <span>&lt;<a href="https://github.com/confidential-computing/governance/blob/main/SIGs/TWI/TWI_Charter.md">https://github.com/confidential-computing/governance/blob/main/SIGs/TWI/TWI_Charter.md</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TWISIGReq">[TWISIGReq]</dt>
+      <dd>
+<span class="refAuthor">Confidential Computing Consortium Trustworthy Workload Identity SIG</span>, <span class="refTitle">"Trustworthy Workload Identity (TWI) Special Interest Group — Requirements"</span>, <span>n.d.</span>, <span>&lt;<a href="https://github.com/confidential-computing/twi/blob/main/TWI_Requirements.md">https://github.com/confidential-computing/twi/blob/main/TWI_Requirements.md</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-7.2">
+        <h3 id="name-informative-references">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="key-management">[key-management]</dt>
+      <dd>
+<span class="refAuthor">Barker, E.</span> and <span class="refAuthor">W. Barker</span>, <span class="refTitle">"Recommendation for key management:: part 2 -- best practices for key management organizations"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-57pt2r1</span>, <time datetime="2019-05" class="refDate">May 2019</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-57pt2r1">https://doi.org/10.6028/nist.sp.800-57pt2r1</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Mark Novak</span></div>
+<div dir="auto" class="left"><span class="org">J.P. Morgan Chase</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:mark.f.novak@jpmchase.com" class="email">mark.f.novak@jpmchase.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Henk Birkholz</span></div>
+<div dir="auto" class="left"><span class="org">Fraunhofer SIT</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:henk.birkholz@ietf.contact" class="email">henk.birkholz@ietf.contact</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>

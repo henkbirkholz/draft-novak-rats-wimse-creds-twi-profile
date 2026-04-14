@@ -47,7 +47,7 @@ normative:
 
 informative:
 
-  key-management: DOI.10.6028/NIST.SP.800-57pt2r1 
+  key-management: DOI.10.6028/NIST.SP.800-57pt2r1
 
 entity:
   SELF: "RFCthis"
@@ -101,7 +101,7 @@ Credential Authority:
 
 Verifier:
 
-: A trusted instance of a RATS Verifier used in Remote Attestation of Workloads 
+: A trusted instance of a RATS Verifier used in Remote Attestation of Workloads
 
 # Cryptographic Keys
 
@@ -181,7 +181,7 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
    +<--(9)-------------------+                       |         |
    |                         |                       |         |
    | Credential Request      |                       |         |
-   +--(10)-------------------+---------------------->+         |                
+   +--(10)-------------------+---------------------->+         |
    |                         |          Validate CSR |         |
    |                         |           +-----(11)--+         |
    |                         |           +---------->+         |
@@ -357,7 +357,7 @@ For that the Key Store has to store the Private CSK.
 
 # Security Considerations
 
-## CWK Acces Policy 
+## CWK Acces Policy
 
 It would be dangerous for any outside party to directly obtain a plaintext CWK from the Key Store as the CWK encrypts the Private CSK.
 Once generated, the CWK is accessed only indirectly and in only the following circumstances:

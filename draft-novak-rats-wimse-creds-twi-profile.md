@@ -509,7 +509,7 @@ All identified threats are represented by their STRIDE abbreviations, as follows
 |      |      |                         | counter-sign the CSR     |
 |      |      |                         | with its own private     |
 |      |      |                         | signing key.             |
-|------|------#-------------------------+--------------------------|
+|------|------+-------------------------+--------------------------|
 |   12 | N/A                                                       |
 |------|------+-------------------------+--------------------------|
 |   13 | DoS  | Sending the Workload    | Both Workload Credential |

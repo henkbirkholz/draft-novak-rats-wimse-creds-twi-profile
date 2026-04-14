@@ -199,74 +199,33 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
 
 | Step | Notes                                                       |
 |-----:|:------------------------------------------------------------|
-|    1 | The Workload Owner computes the intended Workload Identity. |
-|      | This Identity can be expressed as an X.509 subject          |
-|      | alternative name, a WIMSE SVID, etc. The Identity MUST      |
-|      | include all attributes of the Workload that the Relying     |
-|      | Party would need to consider in its authorization policy.   |
-|      | For example, if the Relying Party cares about the country   |
-|      | where the Workload would be executing, that information     |
-|      | must be reflected in the Identity. The mechanism by which   |
-|      | the Workload Owner decides on which identity to assign to   |
-|      | the Workload is outside of scope of this document.          |
+|    1 | The Workload Owner computes the intended Workload Identity. This Identity can be expressed as an X.509 subject alternative name, a WIMSE SVID, etc. The Identity MUST include all attributes of the Workload that the Relying  Party would need to consider in its authorization policy. For example, if the Relying Party cares about the country where the Workload would be executing, that information  must be reflected in the Identity. The mechanism by which the Workload Owner decides on which identity to assign to the Workload is outside of scope of this document. |
 |------|-------------------------------------------------------------|
-|    2 | The Workload Owner precomputes the Attestation Results that |
-|      | the Workload would present to the Key Store in exchange for |
-|      | the CWK during the Acquisition phase. The mechanism for     |
-|      | doing so is outside the scope of this document.             |
+|    2 | The Workload Owner precomputes the Attestation Results that the Workload would present to the Key Store in exchange for the CWK during the Acquisition phase. The mechanism for doing so is outside the scope of this document. |
 |------|-------------------------------------------------------------|
-|    3 | The Workload Owner and the Key Store establish a mutually   |
-|      | authenticated secure channel.                               |
+|    3 | The Workload Owner and the Key Store establish a mutually authenticated secure channel. |
 |------|-------------------------------------------------------------|
-|    4 | The Workload Owner sends the Workload Identity from Step 1  |
-|      | and the Attestation Results from Step 2 to the Key Store.   |
-|      | It expects to receive back from the Key Store (in Step 10,  |
-|      | below) 1) a wrapped CWK and 2) a Credential Signing Request |
-|      | (CSR) that it will subsequently use to request the Workload |
-|      | Credential from the Credential Authority.                   |
+|    4 | The Workload Owner sends the Workload Identity from Step 1 and the Attestation Results from Step 2 to the Key Store. It expects to receive back from the Key Store (in Step 10, below) 1) a wrapped CWK and 2) a Credential Signing Request (CSR) that it will subsequently use to request the Workload Credential from the Credential Authority. |
 |------|-------------------------------------------------------------|
-|    5 | The Key Store generates and stores a new CWK, and sets the  |
-|      | CWK access policy to the value of Attestation Results it    |
-|      | has received in Step 4. For security reasons explained in   |
-|      | the Threat Model section in the Security Considerations     |
-|      | section later in the document, the CWK access policy MUST   |
-|      | NOT be changed once set and MUST NOT allow retrieving or    |
-|      | modifying the CWK.                                          |
+|    5 | The Key Store generates and stores a new CWK, and sets the CWK access policy to the value of Attestation Results it has received in Step 4. For security reasons explained in the Threat Model section in the Security Considerations section later in the document, the CWK access policy MUST NOT be changed once set and MUST NOT allow retrieving or modifying the CWK. |
 |------|-------------------------------------------------------------|
-|    6 | The Key Store generates and stores the CSK Pair. The CSK    |
-|      | Pair has a one-to-one relationship with the CWK that lasts  |
-|      | for the lifetime of both keys. The CSK Pair is stored in    |
-|      | case the Workload Owner might subsequently ask for the      |
-|      | Credential to be renewed without changing the CSK.          |
+|    6 | The Key Store generates and stores the CSK Pair. The CSK pair has a one-to-one relationship with the CWK that lasts for the lifetime of both keys. The CSK Pair is stored in case the Workload Owner might subsequently ask for the Credential to be renewed without changing the CSK. |
 |------|-------------------------------------------------------------|
 |    7 | The Key Store encrypts the Private CSK with the CWK.        |
 |------|-------------------------------------------------------------|
-|    8 | The Key Store uses the Workload Identity supplied in Step 4 |
-|      | and the CSK Pair generated in Step 6 to create a Credential |
-|      | Signing Request (CSR) and signs it with the Private CSK.    |
+|    8 | The Key Store uses the Workload Identity supplied in Step 4 and the CSK Pair generated in Step 6 to create a Credential Signing Request (CSR) and signs it with the Private CSK. |
 |------|-------------------------------------------------------------|
-|    9 | The Key Store returns to the Workload Owner the wrapped     |
-|      | Private CSK computed in Step 7 and the Credential Signing   |
-|      | Request generated in Step 8.                                |
+|    9 | The Key Store returns to the Workload Owner the wrapped Private CSK computed in Step 7 and the Credential Signing Request generated in Step 8. |
 |------|-------------------------------------------------------------|
-|   10 | The Workload Owner forwards the CSR received from the Key   |
-|      | Store in Step 9 to the Credential Authority to request the  |
-|      | Workload Credential.                                        |
+|   10 | The Workload Owner forwards the CSR received from the Key Store in Step 9 to the Credential Authority to request the Workload Credential. |
 |------|-------------------------------------------------------------|
-|   11 | The Credential Authority validates that the CSR has         |
-|      | originated from the appropriate Workload Owner and/or Key   |
-|      | Store (details in the threat model below).                  |
+|   11 | The Credential Authority validates that the CSR has originated from the appropriate Workload Owner and/or Key Store (details in the threat model below). |
 |------|-------------------------------------------------------------|
-|   12 | The Credential Authority generates and signs (with its own  |
-|      | CA issuer signing key, trusted by the Relying Party) the    |
-|      | Workload Credential based on the CSR it has received in     |
-|      | Step 10.                                                    |
+|   12 | The Credential Authority generates and signs (with its own CA issuer signing key, trusted by the Relying Party) the Workload Credential based on the CSR it has received in Step 10. |
 |------|-------------------------------------------------------------|
-|   13 | The Credential Authority returns the Workload Credential to |
-|      | the Workload Owner.                                         |
+|   13 | The Credential Authority returns the Workload Credential to the Workload Owner. |
 |------|-------------------------------------------------------------|
-|   14 | The Workload Owner makes the wrapped Private CSK and the    |
-|      | Workload Credential available to the Workload.              |
+|   14 | The Workload Owner makes the wrapped Private CSK and the Workload Credential available to the Workload. |
 {: #tbl-provisioning title="Provisioning Phase"}
 
 ### Acquisiton Phase
@@ -276,47 +235,29 @@ Diagram TBD
 
 | Step | Notes                                                       |
 |-----:|:------------------------------------------------------------|
-|    1 | The Workload Owner supplies the Workload with the plaintext |
-|      | Workload Credential and the wrapped Private CSK. This is    |
-|      | the same as Step 14 in the previous diagram.                |
+|    1 | The Workload Owner supplies the Workload with the plaintext Workload Credential and the wrapped Private CSK. This is the same as Step 14 in the previous diagram. |
 |------|-------------------------------------------------------------|
-|    2 | Inside its TEE, the Workload generates a CDK asymmetric     |
-|      | encryption key pair.                                        |
+|    2 | Inside its TEE, the Workload generates a CDK asymmetric encryption key pair. |
 |------|-------------------------------------------------------------|
-|    3 | The Workload generates Evidence about itself and its        |
-|      | hosting environment for Remote Attestation. The Evidence    |
-|      | MUST include the public portion of the CDK generated in     |
-|      | Step 2.                                                     |
+|    3 | The Workload generates Evidence about itself and its hosting environment for Remote Attestation. The Evidence MUST include the public portion of the CDK generated in Step 2. |
 |------|-------------------------------------------------------------|
-|    4 | The Workload contacts the Verifier and presents it with     |
-|      | Evidence generated in Step 3.                               |
+|    4 | The Workload contacts the Verifier and presents it with Evidence generated in Step 3. |
 |------|-------------------------------------------------------------|
-|    5 | The Verifier appraises the Evidence received from the       |
-|    6 | Workload in Step 4 and computes Attestation Results based   |
-|      | on this Evidence.                                           |
+|  5/6 | The Verifier appraises the Evidence received from the Workload in Step 4 and computes Attestation Results based on this Evidence. |
 |------|-------------------------------------------------------------|
-|    7 | The Verifier returns Attestation Results from Step 6 back   |
-|      | to the Workload. The Attestation Results MUST contain the   |
-|      | public portion of the CDK from the Evidence.                |
+|    7 | The Verifier returns Attestation Results from Step 6 back to the Workload. The Attestation Results MUST contain the public portion of the CDK from the Evidence. |
 |------|-------------------------------------------------------------|
-|    8 | The Workload forwards the Attestation Results received from |
-|      | the Verifier in Step 7 to the Key Store, requesting the     |
-|      | unwrapped CSK.                                              |
+|    8 | The Workload forwards the Attestation Results received from the Verifier in Step 7 to the Key Store, requesting the unwrapped CSK. |
 |------|-------------------------------------------------------------|
-|    9 | The Key Store validates the Attestation Results against the |
-|      | CWK access policy.                                          |
+|    9 | The Key Store validates the Attestation Results against the CWK access policy. |
 |------|-------------------------------------------------------------|
-|   10 | The Key Store encrypts the CWK with the Public CDK in the   |
-|      | Attestation Results.                                        |
+|   10 | The Key Store encrypts the CWK with the Public CDK in the Attestation Results. |
 |------|-------------------------------------------------------------|
 |   11 | The Key Store returns the encrypted CWK to the Workload.    |
 |------|-------------------------------------------------------------|
 |   12 | The Workload decrypts the CWK with its Private CDK.         |
 |------|-------------------------------------------------------------|
-|   13 | The Workload decrypts the wrapped Private CSK with the CWK. |
-|      | It is now in possession of both the plaintext Credential    |
-|      | (supplied in Step 1) and the Private CSK needed to use it   |
-|      | with proof-of-possession (decrypted in Step 12).            |
+|   13 | The Workload decrypts the wrapped Private CSK with the CWK. It is now in possession of both the plaintext Credential (supplied in Step 1) and the Private CSK needed to use it with proof-of-possession (decrypted in Step 12). |
 {: #tbl-acquisition title="Acquisition Phase"}
 
 ## Discussion
@@ -407,18 +348,9 @@ All identified threats are represented by their STRIDE abbreviations, as follows
 
 | Step | Type | Threat                  | Mitigation               |
 |-----:|:-----|:------------------------|:-------------------------|
-|    1 | S    | The Workload Owner      | Safeguard the Identity   |
-|    2 | T    | and/or Identity         | and Attestation Results  |
-|      | EoP  | generation logic are    | generation logic and     |
-|      |      | tricked into assigning  | policies. Generate       |
-|      |      | the wrong Identity or   | Identity and Attestation |
-|      |      | Attestation Results to  | Results as a pair rather |
-|      |      | the future Workload.    | than separately. Log and |
-|      |      |                         | verify all generated     |
-|      |      |                         | outputs.                 |
-|      |      | Generated Identity and  |                          |
-|      |      | Attestation Results are |                          |
-|      |      | mismatched.             |                          |
+|  1/2 | S    | The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched. | Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.  |
+|      | T    |  |  |
+|      | EoP  |  |  |
 |------|------|-------------------------|--------------------------|
 |    3 | Implement standard practices for securing communications  |
 |      | between two entities (mutual authentication,              |

@@ -1549,141 +1549,27 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
             <tbody>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">1</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner computes the intended Workload Identity.</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">This Identity can be expressed as an X.509 subject</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">alternative name, a WIMSE SVID, etc. The Identity <span class="bcp14">MUST</span>
-</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">include all attributes of the Workload that the Relying</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Party would need to consider in its authorization policy.</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">For example, if the Relying Party cares about the country</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">where the Workload would be executing, that information</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">must be reflected in the Identity. The mechanism by which</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Workload Owner decides on which identity to assign to</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Workload is outside of scope of this document.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner computes the intended Workload Identity. This Identity can be expressed as an X.509 subject alternative name, a WIMSE SVID, etc. The Identity <span class="bcp14">MUST</span> include all attributes of the Workload that the Relying  Party would need to consider in its authorization policy. For example, if the Relying Party cares about the country where the Workload would be executing, that information  must be reflected in the Identity. The mechanism by which the Workload Owner decides on which identity to assign to the Workload is outside of scope of this document.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">2</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner precomputes the Attestation Results that</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Workload would present to the Key Store in exchange for</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the CWK during the Acquisition phase. The mechanism for</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">doing so is outside the scope of this document.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner precomputes the Attestation Results that the Workload would present to the Key Store in exchange for the CWK during the Acquisition phase. The mechanism for doing so is outside the scope of this document.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">3</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner and the Key Store establish a mutually</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">authenticated secure channel.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner and the Key Store establish a mutually authenticated secure channel.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">4</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner sends the Workload Identity from Step 1</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">and the Attestation Results from Step 2 to the Key Store.</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">It expects to receive back from the Key Store (in Step 10,</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">below) 1) a wrapped CWK and 2) a Credential Signing Request</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">(CSR) that it will subsequently use to request the Workload</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Credential from the Credential Authority.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner sends the Workload Identity from Step 1 and the Attestation Results from Step 2 to the Key Store. It expects to receive back from the Key Store (in Step 10, below) 1) a wrapped CWK and 2) a Credential Signing Request (CSR) that it will subsequently use to request the Workload Credential from the Credential Authority.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">5</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores a new CWK, and sets the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">CWK access policy to the value of Attestation Results it</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">has received in Step 4. For security reasons explained in</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Threat Model section in the Security Considerations</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">section later in the document, the CWK access policy <span class="bcp14">MUST</span>
-</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">NOT be changed once set and <span class="bcp14">MUST NOT</span> allow retrieving or</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">modifying the CWK.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores a new CWK, and sets the CWK access policy to the value of Attestation Results it has received in Step 4. For security reasons explained in the Threat Model section in the Security Considerations section later in the document, the CWK access policy <span class="bcp14">MUST NOT</span> be changed once set and <span class="bcp14">MUST NOT</span> allow retrieving or modifying the CWK.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">6</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores the CSK Pair. The CSK</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Pair has a one-to-one relationship with the CWK that lasts</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">for the lifetime of both keys. The CSK Pair is stored in</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">case the Workload Owner might subsequently ask for the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Credential to be renewed without changing the CSK.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store generates and stores the CSK Pair. The CSK pair has a one-to-one relationship with the CWK that lasts for the lifetime of both keys. The CSK Pair is stored in case the Workload Owner might subsequently ask for the Credential to be renewed without changing the CSK.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">7</td>
@@ -1691,83 +1577,31 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">8</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store uses the Workload Identity supplied in Step 4</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">and the CSK Pair generated in Step 6 to create a Credential</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Signing Request (CSR) and signs it with the Private CSK.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store uses the Workload Identity supplied in Step 4 and the CSK Pair generated in Step 6 to create a Credential Signing Request (CSR) and signs it with the Private CSK.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">9</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store returns to the Workload Owner the wrapped</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Private CSK computed in Step 7 and the Credential Signing</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Request generated in Step 8.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store returns to the Workload Owner the wrapped Private CSK computed in Step 7 and the Credential Signing Request generated in Step 8.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">10</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner forwards the CSR received from the Key</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Store in Step 9 to the Credential Authority to request the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Workload Credential.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner forwards the CSR received from the Key Store in Step 9 to the Credential Authority to request the Workload Credential.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">11</td>
-                <td class="text-left" rowspan="1" colspan="1">The Credential Authority validates that the CSR has</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">originated from the appropriate Workload Owner and/or Key</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Store (details in the threat model below).</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority validates that the CSR has originated from the appropriate Workload Owner and/or Key Store (details in the threat model below).</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">12</td>
-                <td class="text-left" rowspan="1" colspan="1">The Credential Authority generates and signs (with its own</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">CA issuer signing key, trusted by the Relying Party) the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Workload Credential based on the CSR it has received in</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Step 10.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority generates and signs (with its own CA issuer signing key, trusted by the Relying Party) the Workload Credential based on the CSR it has received in Step 10.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">13</td>
-                <td class="text-left" rowspan="1" colspan="1">The Credential Authority returns the Workload Credential to</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Workload Owner.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Credential Authority returns the Workload Credential to the Workload Owner.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">14</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner makes the wrapped Private CSK and the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Workload Credential available to the Workload.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner makes the wrapped Private CSK and the Workload Credential available to the Workload.</td>
               </tr>
             </tbody>
           </table>
@@ -1795,100 +1629,39 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
             <tbody>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">1</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload Owner supplies the Workload with the plaintext</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Workload Credential and the wrapped Private CSK. This is</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the same as Step 14 in the previous diagram.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload Owner supplies the Workload with the plaintext Workload Credential and the wrapped Private CSK. This is the same as Step 14 in the previous diagram.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">2</td>
-                <td class="text-left" rowspan="1" colspan="1">Inside its TEE, the Workload generates a CDK asymmetric</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">encryption key pair.</td>
+                <td class="text-left" rowspan="1" colspan="1">Inside its TEE, the Workload generates a CDK asymmetric encryption key pair.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">3</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload generates Evidence about itself and its</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">hosting environment for Remote Attestation. The Evidence</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">
-                  <span class="bcp14">MUST</span> include the public portion of the CDK generated in</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Step 2.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload generates Evidence about itself and its hosting environment for Remote Attestation. The Evidence <span class="bcp14">MUST</span> include the public portion of the CDK generated in Step 2.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">4</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload contacts the Verifier and presents it with</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload contacts the Verifier and presents it with Evidence generated in Step 3.</td>
               </tr>
               <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Evidence generated in Step 3.</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1">5</td>
-                <td class="text-left" rowspan="1" colspan="1">The Verifier appraises the Evidence received from the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1">6</td>
-                <td class="text-left" rowspan="1" colspan="1">Workload in Step 4 and computes Attestation Results based</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">on this Evidence.</td>
+                <td class="text-right" rowspan="1" colspan="1">5/6</td>
+                <td class="text-left" rowspan="1" colspan="1">The Verifier appraises the Evidence received from the Workload in Step 4 and computes Attestation Results based on this Evidence.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">7</td>
-                <td class="text-left" rowspan="1" colspan="1">The Verifier returns Attestation Results from Step 6 back</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">to the Workload. The Attestation Results <span class="bcp14">MUST</span> contain the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">public portion of the CDK from the Evidence.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Verifier returns Attestation Results from Step 6 back to the Workload. The Attestation Results <span class="bcp14">MUST</span> contain the public portion of the CDK from the Evidence.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">8</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload forwards the Attestation Results received from</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">the Verifier in Step 7 to the Key Store, requesting the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">unwrapped CSK.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload forwards the Attestation Results received from the Verifier in Step 7 to the Key Store, requesting the unwrapped CSK.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">9</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store validates the Attestation Results against the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">CWK access policy.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store validates the Attestation Results against the CWK access policy.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">10</td>
-                <td class="text-left" rowspan="1" colspan="1">The Key Store encrypts the CWK with the Public CDK in the</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">Attestation Results.</td>
+                <td class="text-left" rowspan="1" colspan="1">The Key Store encrypts the CWK with the Public CDK in the Attestation Results.</td>
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">11</td>
@@ -1900,19 +1673,7 @@ With the CWK key in its possession, the Workload instance can decrypt the wrappe
               </tr>
               <tr>
                 <td class="text-right" rowspan="1" colspan="1">13</td>
-                <td class="text-left" rowspan="1" colspan="1">The Workload decrypts the wrapped Private CSK with the CWK.</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">It is now in possession of both the plaintext Credential</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">(supplied in Step 1) and the Private CSK needed to use it</td>
-              </tr>
-              <tr>
-                <td class="text-right" rowspan="1" colspan="1"> </td>
-                <td class="text-left" rowspan="1" colspan="1">with proof-of-possession (decrypted in Step 12).</td>
+                <td class="text-left" rowspan="1" colspan="1">The Workload decrypts the wrapped Private CSK with the CWK. It is now in possession of both the plaintext Credential (supplied in Step 1) and the Private CSK needed to use it with proof-of-possession (decrypted in Step 12).</td>
               </tr>
             </tbody>
           </table>
@@ -2113,75 +1874,21 @@ Therefore, for each newly generated CSK there has to exist a different CWK.<a hr
           </thead>
           <tbody>
             <tr>
-              <td class="text-right" rowspan="1" colspan="1">1</td>
+              <td class="text-right" rowspan="1" colspan="1">1/2</td>
               <td class="text-left" rowspan="1" colspan="1">S</td>
-              <td class="text-left" rowspan="1" colspan="1">The Workload Owner</td>
-              <td class="text-left" rowspan="1" colspan="1">Safeguard the Identity</td>
+              <td class="text-left" rowspan="1" colspan="1">The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched.</td>
+              <td class="text-left" rowspan="1" colspan="1">Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.</td>
             </tr>
             <tr>
-              <td class="text-right" rowspan="1" colspan="1">2</td>
+              <td class="text-right" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1">T</td>
-              <td class="text-left" rowspan="1" colspan="1">and/or Identity</td>
-              <td class="text-left" rowspan="1" colspan="1">and Attestation Results</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
             <tr>
               <td class="text-right" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1">EoP</td>
-              <td class="text-left" rowspan="1" colspan="1">generation logic are</td>
-              <td class="text-left" rowspan="1" colspan="1">generation logic and</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">tricked into assigning</td>
-              <td class="text-left" rowspan="1" colspan="1">policies. Generate</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">the wrong Identity or</td>
-              <td class="text-left" rowspan="1" colspan="1">Identity and Attestation</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">Attestation Results to</td>
-              <td class="text-left" rowspan="1" colspan="1">Results as a pair rather</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">the future Workload.</td>
-              <td class="text-left" rowspan="1" colspan="1">than separately. Log and</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">verify all generated</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">outputs.</td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">Generated Identity and</td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">Attestation Results are</td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-            </tr>
-            <tr>
-              <td class="text-right" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1"> </td>
-              <td class="text-left" rowspan="1" colspan="1">mismatched.</td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
             <tr>

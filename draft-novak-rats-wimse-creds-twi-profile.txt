@@ -561,7 +561,7 @@ Table of Contents
    +======+=================+====================+====================+
    | Step | Type            | Threat             | Mitigation         |
    +======+=================+====================+====================+
-   |  1/2 | S               | The Workload Owner | Safeguard the      |
+   |  1/2 | S/T/EoP         | The Workload Owner | Safeguard the      |
    |      |                 | and/or Identity    | Identity and       |
    |      |                 | generation logic   | Attestation        |
    |      |                 | are tricked into   | Results generation |
@@ -574,10 +574,6 @@ Table of Contents
    |      |                 | and Attestation    | separately.  Log   |
    |      |                 | Results are        | and verify all     |
    |      |                 | mismatched.        | generated outputs. |
-   +------+-----------------+--------------------+--------------------+
-   |      | T               |                    |                    |
-   +------+-----------------+--------------------+--------------------+
-   |      | EoP             |                    |                    |
    +------+-----------------+--------------------+--------------------+
    |    3 | Implement       |                    |                    |
    |      | standard        |                    |                    |

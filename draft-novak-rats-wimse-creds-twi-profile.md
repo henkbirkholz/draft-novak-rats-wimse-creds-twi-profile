@@ -348,51 +348,17 @@ All identified threats are represented by their STRIDE abbreviations, as follows
 
 | Step | Type | Threat                  | Mitigation               |
 |-----:|:-----|:------------------------|:-------------------------|
-|  1/2 | S/T/EoP    | The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched. | Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.  |
+|  1/2 | S/T/EoP | The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched. | Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.  |
 |------|------|-------------------------|--------------------------|
-|    3 | Implement standard practices for securing communications  |
-|      | between two entities (mutual authentication,              |
-|      | data-in-transit protection)                               |
+|    3 | Implement standard practices for securing communications between two entities (mutual authentication, data-in-transit protection) |
 |------|------|-------------------------+--------------------------|
-|    4 | S    | An unauthorized entity  | The Key Store MUST       |
-|      | EoP  | places a request to the | authenticate and         |
-|      |      | Key Store resulting in  | authorize the Workload   |
-|      |      | Identity and            | Owner in Step 3 to       |
-|      |      | Attestation Results of  | ensure that only         |
-|      |      | an attacker's choosing  | authorized entities are  |
-|      |      | being provisioned to    | allowed to perform this  |
-|      |      | Workloads.              | operation on the         |
-|      |      |                         | Workload Identity in     |
-|      |      |                         | question.                |
+|    4 | S/EoP | An unauthorized entity places a request to the Key Store resulting in places a request to the Key Store resulting in Identity and Attestation Results of an attacker's choosing being provisioned to Workloads. | The Key Store MUST authenticate and authorize the Workload Owner in Step 3 to ensure that only authorized entities are allowed to perform this operation on the Workload Identity in question. |
 |      |------|-------------------------|--------------------------|
-|      | T    | MITM intercepts and     |                          |
-|      | EoP  | changes the Workload    |                          |
-|      |      | Identity communicated   |                          |
-|      |      | to the Key Store,       |                          |
-|      |      | leading to Credentials  |                          |
-|      |      | being issued for the    |                          |
-|      |      | wrong Identity.         |                          |
-|      |      | MITM intercepts and     |                          |
-|      |      | changes the Attestation |                          |
-|      |      | Results communicated to |                          |
-|      |      | the Key Store, leading  |                          |
-|      |      | to the CWK access       |                          |
-|      |      | policy being incorrect  |                          |
-|      |      | and resulting in        |                          |
-|      |      | Credentials being       |                          |
-|      |      | issued to vulnerable or |                          |
-|      |      | malicious Workloads.    |                          |
+|      | T/EoP | MITM intercepts and changes the Workload Identity communicated to the Key Store, leading to Credentials being issued for the wrong Identity. MITM intercepts and changes the Attestation Results communicated to the Key Store, leading to the CWK access policy being incorrect and resulting in Credentials being issued to vulnerable or malicious Workloads. | |
 |      |------|-------------------------|--------------------------|
-|      | ID   | Attestation Results     |                          |
-|      |      | might leak and provide  |                          |
-|      |      | vulnerability           |                          |
-|      |      | intelligence to an      |                          |
-|      |      | attacker.               |                          |
+|      | ID   | Attestation Results might leak and provide vulnerability intelligence to an attacker. | |
 |      |------|-------------------------|--------------------------|
-|      | S    | The Workload Owner      |                          |
-|      |      | talks to the wrong Key  |                          |
-|      |      | Store which ends up     |                          |
-|      |      | being malicious.        |                          |
+|      | S    | The Workload Owner talks to the wrong Key Store which ends up  being malicious. | |
 |------|------|-------------------------|--------------------------|
 |    5 | ID   | CWK access policy is    | The Key Store is         |
 |      | EoP  | stored in a manner that | expected to implement    |

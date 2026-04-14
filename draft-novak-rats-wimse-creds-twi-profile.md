@@ -348,9 +348,7 @@ All identified threats are represented by their STRIDE abbreviations, as follows
 
 | Step | Type | Threat                  | Mitigation               |
 |-----:|:-----|:------------------------|:-------------------------|
-|  1/2 | S    | The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched. | Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.  |
-|      | T    |  |  |
-|      | EoP  |  |  |
+|  1/2 | S/T/EoP    | The Workload Owner and/or Identity generation logic are tricked into assigning the wrong Identity or Attestation Results to the future Workload. Generated Identity and Attestation Results are mismatched. | Safeguard the Identity and Attestation Results generation logic and policies. Generate Identity and Attestation Results as a pair rather than separately. Log and verify all generated outputs.  |
 |------|------|-------------------------|--------------------------|
 |    3 | Implement standard practices for securing communications  |
 |      | between two entities (mutual authentication,              |
